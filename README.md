@@ -1,50 +1,85 @@
-# React + TypeScript + Vite
+# Scalable Slider Component
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A highly customizable and accessible slider component built with **React** and **TypeScript**. This component offers three variants of sliders with various customization options, perfect for modern web applications.
 
-Currently, two official plugins are available:
+![Slider Image](path/to/slider-image.png)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
 
-## Expanding the ESLint configuration
+### 🎛️ Slider Variants
+- **Range Slider**: Dual thumb slider for selecting a range of values
+- **Discrete Slider**: Single thumb slider with step markers
+- **Continuous Slider**: Smooth single thumb slider
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+### 🗝️ Key Features
+-  Customizable sizes (**24px** and **32px**)
+-  Interactive states (**default**, **hover**, **active**)
+-  Configurable **min**, **max**, and **step** values
+-  Tooltip support
+-  Accessibility support
+-  Disabled state styling
+-  Responsive design
 
-- Configure the top-level `parserOptions` property like this:
+## 📚 Storybook Documentation
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+This component is thoroughly documented using **Storybook**, providing:
+- Interactive examples
+- Variant showcases
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+🔗 **Deployed Storybook**: [Storybook Link](https://67a6eecf9a868840a1fd0154-zwbngkkvbd.chromatic.com/)
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+## ⚙️ Component Props
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+```typescript
+interface SliderProps {
+  min?: number;                // Minimum value (default: 0)
+  max?: number;                // Maximum value (default: 100)
+  step?: number;               // Step increment (default: 20)
+  variant?: "Continuous" | "Discrete" | "Range";  // Slider type
+  size?: 24 | 32;              // Component size in pixels
+  tooltip?: boolean;           // Show value tooltip
+  onChange?: (value: number | [number, number]) => void;  // Value change handler
+  disabled?: boolean;          // Disable the slider
+  status?: "default" | "hover" | "active";  // Visual state
+}
+
+````
+
+## Installation
+
+1. Clone the Git repo. `` git clone https://github.com/theRohan7/QR.git ``
+2. Installing Dependencies `` npm i ``
+3. Run the project locally ``npm run dev `` will run locally on host ``localhost:5174``
+4. Run Storybook: ``npm run storybook``
+
+## Usage
+
+````
+import Slider from './components/Slider';
+
+function App() {
+  return (
+    <Slider
+      variant="Range"
+      min={0}
+      max={100}
+      step={20}
+      tooltip={true}
+      onChange={(value) => console.log(value)}
+    />
+  );
+}
+
+````
+
+
+## Author
+
+
+Rohan Sahu
+
+mail: therohansahu7@gmail.com
+
+Portfolio: https://portfolio-five-alpha-31.vercel.app/
+
+
