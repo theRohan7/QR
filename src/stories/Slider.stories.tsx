@@ -50,10 +50,10 @@ export const Continous: Story = {
     args: {
         variant: "Continous",
         min: 0,
-        max: 100,
-        step: 20,
-        defaultStart: 50,
-        defaultEnd: 75,
-        status: "default"
+        max: 101,
+        step: 10,
+        status: "default",
+        tooltip: true,
+        size: 24
     },
 }

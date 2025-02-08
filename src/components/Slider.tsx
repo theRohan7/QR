@@ -9,8 +9,6 @@ interface SliderProps {
   min?: number;
   max?: number;
   step?: number;
-  defaultStart?: number;
-  defaultEnd?: number;
   variant?: SliderVariant;
   size?: Size;
   style?: CSSProperties;
@@ -24,8 +22,6 @@ const Slider: React.FC<SliderProps> = ({
   min: propMin = 0,
   max: propMax = 100,
   step = 20,
-  defaultStart: propDefaultStart = 0,
-  defaultEnd: propDefaultEnd = 100,
   onChange,
   variant = "Range",
   tooltip = false,
@@ -37,47 +33,41 @@ const Slider: React.FC<SliderProps> = ({
   const min = Math.min(propMin, propMax);
   const max = Math.max(propMin, propMax);
 
-  const validDefaultStart = Math.max(min, Math.min(propDefaultStart, max));
-
-  const validDefaultEnd = variant === "Range" 
-  ? Math.max(validDefaultStart, Math.min(propDefaultEnd, max))
-  : propDefaultEnd;
-
-
-
-  const [minValue, setMinValue] = useState<number>(validDefaultStart);
-  const [maxValue, setMaxValue] = useState<number>(validDefaultEnd);
+  const [value, setValue] = useState<number>(min);
+  const [rangeMinValue, setRangeMinValue] = useState<number>(min);
+  const [rangeMaxValue, setRangeMaxValue] = useState<number>(max);
   const [currentStatus, setCurrentStatus] = useState<status>(status);
 
-  useEffect(() => {
-    const newStart = Math.max(min, Math.min(propDefaultStart, max));
-    const newEnd = variant === "Range" 
-      ? Math.max(newStart, Math.min(propDefaultEnd, max))
-      : propDefaultEnd;
+  const validStep = Math.max(1, Math.min(step, max - min));
 
-    setMinValue(newStart);
-    setMaxValue(newEnd);
-  }, [propDefaultStart, propDefaultEnd, min, max, variant]);
 
-  const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value: number = Math.min(Number(e.target.value), maxValue - 1);
-    setMinValue(value);
+  const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Number(e.target.value);
+    setValue(value);
     if (onChange) {
-      onChange(variant === "Range" ? [value, maxValue] : value);
+      onChange(value);
     }
   };
 
-  const handleMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value: number = Math.max(Number(e.target.value), minValue + 1);
-    setMaxValue(value);
+  const handleRangeMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Math.max(min, Math.min(Number(e.target.value), rangeMaxValue - validStep));
+    setRangeMinValue(value);
     if (onChange) {
-      onChange([minValue, value]);
+      onChange([value, rangeMaxValue]);
+    }
+  };
+
+  const handleRangeMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Math.max(rangeMinValue + validStep, Math.min(Number(e.target.value), max));
+    setRangeMaxValue(value);
+    if (onChange) {
+      onChange([rangeMinValue, value]);
     }
   };
 
   const calculateRangeStyle = () => {
-    const left = ((minValue - min) / (max - min)) * 100;
-    const right = 100 - ((maxValue - min) / (max - min)) * 100;
+    const left = ((rangeMinValue - min) / (max - min)) * 100;
+    const right = 100 - ((rangeMaxValue - min) / (max - min)) * 100;
     return {
       left: `${left}%`,
       right: `${right}%`,
@@ -87,13 +77,13 @@ const Slider: React.FC<SliderProps> = ({
   const calculateStyle = () => {
     return {
       left: '0%',
-      right: `${100 - ((minValue - min) / (max - min)) * 100}%`
+      right: `${100 - ((value - min) / (max - min)) * 100}%`
     };
   };
 
   const steps = Array.from(
-    { length: (max - min) / step + 1 },
-    (_, index) => min + index * step
+    { length: Math.floor((max - min) / validStep) + 1 },
+    (_, index) => min + index * validStep
   );
 
   const getSliderHeight = () => {
@@ -155,7 +145,7 @@ const Slider: React.FC<SliderProps> = ({
                   left: calculateRangeStyle().left,
                   top: "-35px",
                 }}>
-                  {minValue}
+                  {rangeMinValue}
                 </span>
               )}
               <input
@@ -163,8 +153,8 @@ const Slider: React.FC<SliderProps> = ({
                 className={`slider-input range-slider ${getThumbSize()}`}
                 min={min}
                 max={max}
-                value={minValue}
-                onChange={handleMinChange}
+                value={rangeMinValue}
+                onChange={handleRangeMinChange}
                 disabled={disabled}
               />
             </div>
@@ -173,10 +163,10 @@ const Slider: React.FC<SliderProps> = ({
               {tooltip && (
                 <span className="max-tooltip" style={{
                   position: "absolute",
-                  left: `${((maxValue - min) / (max - min)) * 100}%`,
+                  left: `${((rangeMaxValue - min) / (max - min)) * 100}%`,
                   top: "-35px",
                 }}>
-                  {maxValue}
+                  {rangeMaxValue}
                 </span>
               )}
               <input
@@ -184,8 +174,8 @@ const Slider: React.FC<SliderProps> = ({
                 className={`slider-input range-slider ${getThumbSize()}`}
                 min={min}
                 max={max}
-                value={maxValue}
-                onChange={handleMaxChange}
+                value={rangeMaxValue}
+                onChange={handleRangeMaxChange}
                 disabled={disabled}
               />
             </div>
@@ -200,10 +190,10 @@ const Slider: React.FC<SliderProps> = ({
             {tooltip && (
               <span className="min-tooltip" style={{
                 position: "absolute",
-                left: `${((minValue - min) / (max - min)) * 100}%`,
+                left: `${((value - min) / (max - min)) * 100}%`,
                 top: "-35px",
               }}>
-                {minValue}
+                {value}
               </span>
             )}
             <input
@@ -212,8 +202,8 @@ const Slider: React.FC<SliderProps> = ({
               min={min}
               max={max}
               step={step}
-              value={minValue}
-              onChange={handleMinChange}
+              value={value}
+              onChange={handleValueChange}
               disabled={disabled}
             />
           </div>
@@ -226,10 +216,10 @@ const Slider: React.FC<SliderProps> = ({
             {tooltip && (
               <span className="min-tooltip" style={{
                 position: "absolute",
-                left: `${((minValue - min) / (max - min)) * 100}%`,
+                left: `${((value - min) / (max - min)) * 100}%`,
                 top: "-35px",
               }}>
-                {minValue}
+                {value}
               </span>
             )}
             <input
@@ -237,8 +227,8 @@ const Slider: React.FC<SliderProps> = ({
               className={`slider-input ${getThumbSize()}`}
               min={min}
               max={max}
-              value={minValue}
-              onChange={handleMinChange}
+              value={value}
+              onChange={handleValueChange}
               disabled={disabled}
             />
           </div>
