@@ -48,7 +48,7 @@ type Story = StoryObj<SliderProps>;
 
 export const Continous: Story = {
     args: {
-        variant: "Continous",
+        variant: "Range",
         min: 0,
         max: 101,
         step: 10,
