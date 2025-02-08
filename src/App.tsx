@@ -4,9 +4,13 @@ function App() {
   return (
     <div className="app">
       <Slider
-        variant="Continous"
+        variant="Range"
         min={0}
         max={100}
+        tooltip={true}
+        step={
+          10
+        }
       />
     </div>
   );
